@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PODLM4 - Podcast Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <nav class="bg-gray-800 w-full p-4 shadow-lg fixed top-0 z-50 flex justify-between items-center">
+        <button id="toggle-sidebar" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Files</button>
+        <img src="/public/images/logo.png" alt="PODLM4 Logo" class="h-10">
+        <div></div> <!-- Empty div to balance the flex layout -->
+    </nav>
+    <div class="flex flex-col w-full mt-16">
+        <div class="flex flex-row w-full">
+            <!-- Sidebar -->
+            <div id="sidebar" class="bg-gray-800 w-80 p-4 flex flex-col h-screen fixed top-16 sidebar border-r border-gray-700">
+                <h2 class="text-xl font-bold mb-4">Files</h2>
+                <div id="drop-area" class="flex-1 bg-gray-700 p-4 rounded-lg border-2 border-dashed border-gray-600 flex flex-col items-center justify-center">
+                    <p class="text-gray-300 mb-4">Drag & Drop files here</p>
+                    <input type="file" id="file-input" class="hidden" multiple>
+                    <button id="file-select-button" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Select Files</button>
+                </div>
+                <ul id="file-list" class="mt-4 flex-1 overflow-y-auto">
+                    <!-- Uploaded files will be listed here -->
+                </ul>
+            </div>
+            <!-- Main Content -->
+            <div id="main-content" class="container mx-auto flex flex-col items-center justify-center flex-1 ml-80 main-content">
+                <div class="text-center mb-8 mt-8"> <!-- Added mt-8 for padding above -->
+                    <p class="text-lg">Welcome to PODLM4, your ultimate podcast generator. Follow the steps below to create your podcast:</p>
+                </div>
+                <div class="w-full max-w-md">
+                    <ol class="list-decimal list-inside text-left mb-8">
+                        <li>Upload your audio files using the sidebar.</li>
+                        <li>Click the "Generate" button next to each file to start the podcast generation process.</li>
+                        <li>Wait for the progress bar to complete.</li>
+                        <li>Listen to your generated podcast in the result section below.</li>
+                    </ol>
+                </div>
+                <div id="progress-container" class="w-full max-w-md mt-4 hidden">
+                    <div class="bg-gray-600 rounded-full h-4"> <!-- Changed background to gray -->
+                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full" style="width: 0%;"></div>
+                    </div>
+                    <p id="progress-text" class="text-center text-gray-300 mt-2"></p>
+                </div>
+                <div id="result" class="mt-8 w-full max-w-md"></div>
+            </div>
+        </div>
+    </div>
+   
+
+    <script>
+        const socket = io();
+
+        socket.on('progress', function(data) {
+            document.getElementById('progress-bar').style.width = data.progress + '%';
+            document.getElementById('progress-text').innerText = data.message;
+        });
+
+        // Drag and Drop functionality
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const fileSelectButton = document.getElementById('file-select-button');
+        const fileList = document.getElementById('file-list');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleSidebarButton = document.getElementById('toggle-sidebar');
+
+        fileSelectButton.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('border-blue-500');
+        });
+        dropArea.addEventListener('dragleave', () => dropArea.classList.remove('border-blue-500'));
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('border-blue-500');
+            handleFiles(event.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            for (const file of files) {
+                const listItem = document.createElement('li');
+                listItem.className = 'flex items-center justify-between p-2 bg-gray-700 rounded-md mb-2 border border-gray-600';
+                listItem.innerHTML = `
+                    <span class="text-gray-300">${file.name}</span>
+                    <button class="bg-blue-600 text-white py-1 px-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="generatePodcast('${file.name}')">Generate</button>
+                `;
+                fileList.appendChild(listItem);
+            }
+            // Hide the drop area UI once files are uploaded
+            dropArea.style.display = 'none';
+        }
+
+        function generatePodcast(fileName) {
+            const formData = new FormData();
+            const file = Array.from(fileInput.files).find(f => f.name === fileName);
+            if (file) {
+                formData.append('file', file);
+
+                document.getElementById('progress-container').classList.remove('hidden');
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('progress-text').innerText = 'Starting the podcast generation...';
+
+                fetch('/generate_podcast', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Error generating podcast');
+                    }
+                }).then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = url;
+                    document.getElementById('result').innerHTML = '';
+                    document.getElementById('result').appendChild(audio);
+                    document.getElementById('progress-text').innerText = 'Podcast generation completed!';
+                }).catch(error => {
+                    document.getElementById('result').innerText = error.message;
+                    document.getElementById('progress-text').innerText = 'Error generating podcast.';
+                }).finally(() => {
+                    document.getElementById('progress-container').classList.add('hidden');
+                });
+            }
+        }
+
+        toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-hidden');
+            if (sidebar.classList.contains('sidebar-hidden')) {
+                mainContent.style.marginLeft = '0';
+            } else {
+                mainContent.style.marginLeft = '20rem'; // Adjust this value to match the sidebar width
+            }
+        });
+    </script>
+</body>
+</html>
