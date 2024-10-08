@@ -114,4 +114,4 @@ def chat():
 
 
 if __name__ == "__main__":
-    socketio.run(app, port=5230, debug=True, use_reloader=True)
+    socketio.run(app, port=5000, debug=True, use_reloader=True)

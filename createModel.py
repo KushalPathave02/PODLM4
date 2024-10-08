@@ -2,7 +2,7 @@ import ollama
 
 modelfile = '''
 FROM llama3.2:3b
-PARAMETER num_ctx 10000
+# PARAMETER num_ctx 5000
 PARAMETER temperature 1 
 # PARAMETER num_predict -1 
 
@@ -13,7 +13,7 @@ The conversation is in the format of a podcast, but you should not include forma
 Directly begin with the conversation, with the female character telling what the context is about and then primarily asking questions or expressing doubts.
 
 Every line Should start with
-Female:
+Female: 
 Male: 
 
 The male character is knowledgeable and often provides answers, but he may have doubts and exchange information.
@@ -42,3 +42,4 @@ And alwasy start with "Female:"
 
 
 ollama.create(model="PODLM4", modelfile=modelfile)
+
