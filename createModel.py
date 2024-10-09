@@ -1,7 +1,7 @@
 import ollama
 
 modelfile = '''
-FROM llama3.2:1b
+FROM llama3.2:3b
 # PARAMETER num_ctx 5000
 PARAMETER temperature 1 
 # PARAMETER num_predict -1 
