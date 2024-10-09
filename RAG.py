@@ -62,7 +62,7 @@ def generateResponse(conversationHistory, question):
 
     prompt = f"HISTORY: {conversationHistory} \nONLY Use the following context to answer the question:\n\n{combinedText}\n\nQuestion: {question}"
     response = client.generate(
-        model="llama3.2:3b", 
+        model="llama3.2:1b", 
         prompt=prompt
     )['response']
 
