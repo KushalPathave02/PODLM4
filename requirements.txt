@@ -1,0 +1,11 @@
+flask
+ollama
+PyPDF2
+numpy
+transformers
+langchain-community
+scikit-learn
+chromadb
+sentence-transformers
+pydub
+torch

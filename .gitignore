@@ -1,0 +1,38 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment Variables
+.env
+*.env
+
+# Flask instance folder
+instance/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+*.egg-info/
+*.egg
+
+# Test Coverage
+.coverage
+coverage.xml
+*.cover
+
+# Logs
+*.log
+
+# Static files
+/static/
