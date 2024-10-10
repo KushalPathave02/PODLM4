@@ -57,7 +57,7 @@
     </nav>
     <div class="flex flex-col w-full mt-16">
         <div class="flex flex-row w-full">
-            <!-- Sidebar -->
+            
             <div id="sidebar" class="bg-gray-800 p-4 flex flex-col h-screen fixed top-16 sidebar border-r border-gray-700">
                 <h2 class="text-xl font-bold mb-4">Files</h2>
                 <div id="drop-area" class="flex-1 bg-gray-700 p-4 rounded-lg border-2 border-dashed border-gray-600 flex flex-col items-center justify-center">
@@ -70,8 +70,8 @@
                 </ul>
             </div>
             <!-- Main Content -->
-            <div id="main-content" class="container mx-auto flex flex-col items-center justify-center flex-1 ml-96 main-content"> <!-- Adjusted margin-left -->
-                <div class="text-center mb-8 mt-8"> <!-- Added mt-8 for padding above -->
+            <div id="main-content" class="container mx-auto flex flex-col items-center justify-center flex-1 ml-96 main-content"> 
+                <div class="text-center mb-8 mt-8"> 
                     <p class="text-lg">Welcome to PODLM4, your ultimate podcast generator. Follow the steps below to create your podcast:</p>
                 </div>
                 <div class="w-full max-w-md">
@@ -84,17 +84,17 @@
                     </ol>
                 </div>
                 <div id="progress-container" class="w-full max-w-md mt-4 hidden">
-                    <div class="bg-gray-600 rounded-full h-4"> <!-- Changed background to gray -->
+                    <div class="bg-gray-600 rounded-full h-4"> 
                         <div id="progress-bar" class="bg-blue-600 h-4 rounded-full" style="width: 0%;"></div>
                     </div>
                     <p id="progress-text" class="text-center text-gray-300 mt-2"></p>
                 </div>
                 <div id="result" class="mt-8 w-full max-w-md"></div>
             </div>
-            <!-- Chatbot Section -->
-            <div id="chatbot" class="bg-gray-800 p-4 flex flex-col fixed top-16 right-0 chatbot chatbot-hidden border-l border-gray-700"> <!-- Added chatbot-hidden class -->
+            
+            <div id="chatbot" class="bg-gray-800 p-4 flex flex-col fixed top-16 right-0 chatbot chatbot-hidden border-l border-gray-700"> 
                 <h2 class="text-xl font-bold mb-4">Chat with PODLM4</h2>
-                <div id="chat-window" class="bg-gray-700 p-4 rounded-lg overflow-y-auto mb-4" style="height: 70vh;"></div> <!-- Adjusted height -->
+                <div id="chat-window" class="bg-gray-700 p-4 rounded-lg overflow-y-auto mb-4" style="height: 70vh;"></div> 
                 <div class="flex">
                     <input type="text" id="chat-input" class="flex-1 p-2 rounded-l-md bg-gray-600 text-white" placeholder="Ask a question...">
                     <button id="send-button" class="bg-blue-600 text-white py-2 px-4 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Send</button>
@@ -189,7 +189,7 @@
             const file = Array.from(fileInput.files).find(f => f.name === fileName);
             if (file) {
                 formData.append('file', file);
-                fetch('/upload_rag_file', {  // Corrected endpoint
+                fetch('/upload_rag_file', {  
                     method: 'POST',
                     body: formData
                 }).then(response => {
@@ -210,7 +210,7 @@
             if (sidebar.classList.contains('sidebar-hidden')) {
                 mainContent.style.marginLeft = '0';
             } else {
-                mainContent.style.marginLeft = '24rem'; // Adjust this value to match the sidebar width
+                mainContent.style.marginLeft = '24rem'; 
             }
         });
         toggleChatbotButton.addEventListener('click', () => {
@@ -221,12 +221,12 @@
                 mainContent.style.marginRight = '30rem'; // Adjust this value to match the chatbot width
             }
         });
-        // Chatbot functionality
+      
         const chatInput = document.getElementById('chat-input');
         const sendButton = document.getElementById('send-button');
         const chatWindow = document.getElementById('chat-window');
         
-        // Add event listener for Enter key
+        
         chatInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 sendButton.click();

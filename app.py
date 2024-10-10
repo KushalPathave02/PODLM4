@@ -1,6 +1,6 @@
 from flask import Flask, request, send_file, render_template, jsonify
 from flask_socketio import SocketIO, emit
-from langchain_community.llms import Ollama
+from podcastGenerate import generateSegmentedPodcast
 from pdfExtractor import extractText
 from audioModelLoader import loadModel, generateAudio
 from pydub import AudioSegment
@@ -29,18 +29,22 @@ def generate_podcast():
 
     socketio.emit('progress', {'progress': 0, 'message': 'Extracting text from the file...'})
 
-    content = extractText(file_path)
-    PODLM = Ollama(model="PODLM4")
+    print("Generating podcast content...")
+    podcast = generateSegmentedPodcast("PODLM4", extractText(file_path), socketio)
+    print(podcast)
+
+
     femalePrompt = "v2/en_speaker_9"
     malePrompt = "v2/en_speaker_6"
 
-    socketio.emit('progress', {'progress': 10, 'message': 'Generating podcast content...'})
-    podcast = PODLM.invoke(input=content)
-
     audioModel, processor = loadModel()
+
+
     podcastList = [line[7:] if line.startswith("Female:") else line[6:] for line in podcast.split("\n") if line.startswith(("Female:", "Male:"))]
 
     combined_audio = AudioSegment.empty()
+
+
     for i in range(0, len(podcastList), 2):
         if len(podcastList[i].strip()) == 0:
             continue
@@ -65,6 +69,7 @@ def generate_podcast():
             combined_audio += male_segment
 
         progress = int((i + 2) / len(podcastList) * 100)
+        
         socketio.emit('progress', {'progress': progress, 'message': f'Processing segment {i//2 + 1} of {len(podcastList)//2}...'})
 
     socketio.emit('progress', {'progress': 90, 'message': 'Finalizing the podcast...'})

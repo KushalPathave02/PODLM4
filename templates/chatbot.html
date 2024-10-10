@@ -8,7 +8,7 @@
     <style>
         .chatbot {
             transition: transform 0.3s ease;
-            width: 5rem; /* Increased width */
+            width: 30rem; /* Adjusted width */
             height: 90vh; /* Increased height */
         }
         .chatbot-hidden {
@@ -17,17 +17,16 @@
     </style>
 </head>
 <body class="bg-gray-800 text-white min-h-screen flex flex-col">
-    <!-- Chatbot Section -->
     <div id="chatbot" class="bg-gray-800 p-4 flex flex-col fixed top-0 right-0 chatbot border-l border-gray-700">
         <h2 class="text-xl font-bold mb-4">Chat with PODLM4</h2>
-        <div id="chat-window" class="bg-gray-700 p-4 rounded-lg overflow-y-auto mb-4" style="height: 75vh;"></div> <!-- Adjusted height -->
+        <div id="chat-window" class="bg-gray-700 p-4 rounded-lg overflow-y-auto mb-4" style="height: 75vh;"></div> 
         <div class="flex">
             <input type="text" id="chat-input" class="flex-1 p-2 rounded-l-md bg-gray-600 text-white" placeholder="Ask a question...">
             <button id="send-button" class="bg-blue-600 text-white py-2 px-4 rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Send</button>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        // Chatbot functionality
         const chatInput = document.getElementById('chat-input');
         const sendButton = document.getElementById('send-button');
         const chatWindow = document.getElementById('chat-window');
@@ -52,7 +51,7 @@
               .then(data => {
                   const botMessage = document.createElement('div');
                   botMessage.className = 'bg-gray-600 text-white p-2 rounded-md mb-2 self-start';
-                  botMessage.innerText = data.answer;
+                  botMessage.innerHTML = marked(data.answer); 
                   chatWindow.appendChild(botMessage);
                   chatWindow.scrollTop = chatWindow.scrollHeight;
               }).catch(error => {

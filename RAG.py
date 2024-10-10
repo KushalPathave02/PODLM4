@@ -60,9 +60,9 @@ def generateResponse(conversationHistory, question):
   
 
 
-    prompt = f"HISTORY: {conversationHistory} \nONLY Use the following context to answer the question:\n\n{combinedText}\n\nQuestion: {question}"
+    prompt = f"HISTORY: \n{conversationHistory}\n\nContext:\n{combinedText}\n\nQuestion: {question}"
     response = client.generate(
-        model="llama3.2:3b", 
+        model="PODLM4CHAT", 
         prompt=prompt
     )['response']
 
