@@ -9,3 +9,5 @@ chromadb
 sentence-transformers
 pydub
 torch
+flask-socketio
+tf-keras
