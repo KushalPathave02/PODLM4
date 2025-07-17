@@ -71,19 +71,8 @@ def generateResponse(conversationHistory, question):
     if not combinedText:
         return "No relevant information found in the document."
 
-<<<<<<< HEAD
-  
-
-
-    prompt = f"HISTORY: \n{conversationHistory}\n\nContext:\n{combinedText}\n\nQuestion: {question}"
-    response = client.generate(
-        model="PODLM4CHAT", 
-        prompt=prompt
-    )['response']
-=======
     prompt = f"HISTORY: {conversationHistory} \nONLY Use the following context to answer the question:\n\n{combinedText}\n\nQuestion: {question}"
     response = client.generate(model="llama3.2:3b", prompt=prompt)["response"]
->>>>>>> 86e7cdd5979983a2d489d2cd885ba844f06cc655
 
     print(f"Generated response: {response}")  # Debugging statement
     return response
