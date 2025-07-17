@@ -30,37 +30,25 @@ PODLM4 transforms documents into engaging podcasts while providing an AI-powered
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/PODLM4.git
+git clone https://github.com/KushalPathave02/PODLM4.git
 ```
 
-## 🚀 Getting Started
-
-1. Navigate to project directory
+2. Navigate to project directory
 ```bash
-cd your-project-directory
+cd PODLM4
 ```
 
-2. Install dependencies
+3. Install dependencies
 ```bash
-npm install
+pip install -r requirements.txt
 ```
 
-3. Initialize ollama (make sure lamma3.2:3b is Installed).
+4. Initialize ollama (make sure llama3.2:3b is installed)
 ```bash
 ollama serve
 ```
 
-4. Run the application
+5. Run the application
 ```bash
-npm run dev
+python app.py
 ```
-
-
-
-
-
-
-
-
-
-
